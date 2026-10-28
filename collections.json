@@ -1,0 +1,634 @@
+{
+    "CompoundEmployee": {
+        "api": "sfapi",
+        "query": [
+            "SELECT",
+            "person, personal_information, paycompensation_recurring, paycompensation_non_recurring, ",
+            "address_information, phone_information, email_information, employment_information, ",
+            "national_id_card, job_information, job_relation, compensation_information, ",
+            "personal_documents_information, dependent_information, payment_information, ",
+            "SecondaryAssignments, emergency_contact_primary",
+            "FROM CompoundEmployee" ],
+        "query_incremental": [
+            "SELECT",
+            "person, personal_information, paycompensation_recurring, paycompensation_non_recurring, ",
+            "address_information, phone_information, email_information, employment_information, ",
+            "national_id_card, job_information, job_relation, compensation_information, ",
+            "personal_documents_information, dependent_information, payment_information, ",
+            "SecondaryAssignments, emergency_contact_primary",
+            "FROM CompoundEmployee",
+            "WHERE last_modified_on > to_DateTime('{ts_incr}')" ],
+        "pk_mongofind": "person.person_id_external",
+        "pk_jsonpath": "$.person[0].person_id_external",
+        "doc_xpath": "./sfo:sfobject[sfo:person]",
+        "list_paths": [
+            ["sfobject", "person"],
+            ["sfobject", "person", "address_information"],
+            ["sfobject", "person", "dependent_information"],
+            ["sfobject", "person", "dependent_information", "dependent_address_information"],
+            ["sfobject", "person", "dependent_information", "dependent_national_id_card_information"],
+            ["sfobject", "person", "dependent_information", "dependent_personal_information"],
+            ["sfobject", "person", "dependent_information", "dependent_personal_information", "dependent_personal_information_???"],
+            ["sfobject", "person", "dependent_information", "dependent_relation_information"],
+            ["sfobject", "person", "email_information"],
+            ["sfobject", "person", "employment_information"],
+            ["sfobject", "person", "employment_information", "PaymentInformationV3"],
+            ["sfobject", "person", "employment_information", "PaymentInformationV3", "PaymentInformationDetailV3"],
+            ["sfobject", "person", "employment_information", "PaymentInformationV3", "PaymentInformationDetailV3", "PaymentInformationDetailV3???"],
+            ["sfobject", "person", "employment_information", "PaymentInformationV3", "PaymentInformationDetailV3", "cust_PaymentInformationDetailV3???"],
+            ["sfobject", "person", "employment_information", "compensation_information"],
+            ["sfobject", "person", "employment_information", "compensation_information", "paycompensation_recurring"],
+            ["sfobject", "person", "employment_information", "job_information"],
+            ["sfobject", "person", "employment_information", "job_relation"],
+            ["sfobject", "person", "employment_information", "paycompensation_non_recurring"],
+            ["sfobject", "person", "employment_information", "personal_documents_information"],
+            ["sfobject", "person", "national_id_card"],
+            ["sfobject", "person", "personal_information"],
+            ["sfobject", "person", "personal_information", "personal_information_???"],
+            ["sfobject", "person", "phone_information"],
+            ["sfobject", "person", "emergency_contact_primary"],
+            ["sfobject", "log", "log_item"] ],
+        "indices": [
+            "person.person_id_external",
+            "person.email_information.email_address",
+            "person.employment_information.job_information.manager_id",
+            "person.employment_information.user_id",
+            "person.0.employment_information.user_id" ]
+    },
+    "JobApplication": {
+        "query": [
+            "$expand=candidate,jobAppStatus,cust_LocationGroup,cust_basepay,cust_basepayoffer,cust_contractcountry,",
+            "cust_FRA_contractReason,cust_contracttype,cust_contracttypeIDN,cust_Disability1,cust_DisabilityGBR,",
+            "cust_DisabilityTWN,cust_Disability1_EG_PWD,cust_Disability,cust_employeeClass,cust_Employeetype,",
+            "cust_Employmenttype,cust_eventReason,cust_Gender,cust_Gender_MexicoCanada,cust_Gender_RestOfWorld,",
+            "cust_Gender_firstapp,cust_Gender_EG_PWD,cust_Gender_EC,cust_InternalHire,cust_licence,cust_nationality,",
+            "cust_nationalityUSA,nationality,cust_Adjustments,EthnicGroup_MAC,cust_ChinaMakerChecker,cust_MakerChecker,",
+            "custOnboarding_outcome,cust_countryPerm,cust_probationStatus,cust_RejectReason,cust_Revised_Source_Channel,",
+            "custRTW_TA_verify,custRTW_TA_status,cust_sgsalarygrade,cust_soceco,statusId,custVetting_status,",
+            "custVetting_outcome,cust_VettingPackage_confirmation,custVetting_TA_verify,EthnicGroup,EthnicGroupGBR,",
+            "EthnicGroup_HKG,EthnicGroup_IDN,EthnicGroup_IMN,EthnicGroup_IMNNew,EthnicGroup_IND,EthnicGroup_JEY,",
+            "EthnicGroup_JEYNew,EthnicGroup_KOR,EthnicGroup_KWT,EthnicGroup_LKA,EthnicGroup_MEX,EthnicGroup_MUS,",
+            "EthnicGroup_SGP1stApp,EthnicGroup_THA,EthnicGroup_TWN,EthnicGroup_UAE,EthnicGroup_USA,cust_contractcountry,",
+            "cust_relocationpackage" ],
+        "postproc": {
+            "extraction": {
+                "move": {
+                    "$.cust_EmploymentType": "cust_EmploymentType_Label",
+                    "$.cust_Immediate_Cash_currency": "cust_Immediate_Cash_currency_Label",
+                    "$.cust_Immediate_Cash_startDate": "cust_Immediate_Cash_startDate_Label" } } },
+        "indices": [
+            "applicationId",
+            "applicationTemplateId",
+            "lastModifiedDateTime" ]
+    },
+    "FOCompany": {
+        "query": "$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "FODepartment": {
+        "query": "$expand=cust_toDivision&$orderBy=externalCode,startDate",
+        "indices": ["externalCode", "startDate" ]
+    },
+    "FOPayComponentGroup": {
+        "indices" : [ "externalCode" ]
+    },
+    "FOPayGrade": {
+        "query": "$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "FOPayGroup": {
+        "query": "$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "FOFrequency": {
+        "indices" : [ "externalCode" ]
+    },
+    "FOLocation": {
+        "query": "$expand=addressNavDEFLT,nameTranslationNav,companyFlxNav&$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "BenefitInsuranceDependentDetail": {
+        "query": "$expand=personNav,personNav/personalInfoNav&$orderby=BenefitEnrollment_id,BenefitEnrollment_effectiveStartDate&paging=snapshot",
+        "indices": [ "BenefitEnrollment_id" ]
+    },
+    "BenefitInsurancePlanEnrollmentDetails": {
+        "query": "$orderby=BenefitEnrollment_id,BenefitEnrollment_effectiveStartDate&paging=snapshot",
+        "indices": [ "BenefitEnrollment_id" ]
+    },
+    "BenefitEnrollmentOptoutDetails": {
+        "query": "$orderby=BenefitEmployeeOptoutRequests_workerId&paging=snapshot",
+        "indices": [ "BenefitEmployeeOptoutRequests_workerId" ]
+    },
+    "FOCostCenter": {
+        "query": "$expand=cust_toCompany,cust_toDepartment/cust_toDivision/cust_BFLevel4/cust_BFLevel3/cust_BFLevel2/cust_BFLevel1&$orderby=externalCode,startDate",
+        "indices": ["externalCode", "cust_toDepartmentProp" ]
+    },
+    "Background_OutsideWorkExperience": {
+        "indices": ["userId", "backgroundElementId" ]
+    },
+    "FOJobCode": {
+        "query": "$expand=localNavUSA,localNavCAN&$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "FODivision": {
+        "query": "$expand=cust_BFLevel4&$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "FOBusinessUnit": {
+        "query": "$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "cust_BFLevel2": {
+        "query": "$expand=cust_BFLevel1&$orderby=effectiveStartDate,externalCode",
+        "indices": [ "externalCode" ]
+    },
+    "cust_BFLevel3": {
+        "query": "$expand=cust_BFLevel2&$orderby=effectiveStartDate,externalCode",
+        "indices": [ "externalCode" ]
+    },
+    "cust_BFLevel4": {
+        "query": "$expand=cust_BFLevel3&$orderby=effectiveStartDate,externalCode",
+        "indices": [ "externalCode" ]
+    },
+    "User": {
+        "query": [
+            "$expand=directReports&$select=userId,timeZone,firstName,mi,lastName,email,username,title,",
+            "department,empId,defaultLocale,lastModified,directReports/userId&$orderby=userId"],
+        "query_incremental": [
+            "$expand=directReports&$select=userId,timeZone,firstName,mi,lastName,email,username,title,",
+            "department,empId,defaultLocale,lastModified,directReports/userId",
+            "&$filter=lastModifiedDateTime ge datetime'{ts_incr}'"],
+        "pk_mongofind": "userId",
+        "pk_jsonpath": "$.userId",
+        "indices": [
+            "userId",
+            "externalCode",
+            "empId",
+            "username" ]
+    },
+    "User_SFAPI": {
+        "api": "sfapi",
+        "query": "SELECT id, externalId FROM User",
+        "query_incremental": "SELECT id, externalId FROM User WHERE lastModified > to_DateTime('{ts_incr}')",
+        "pk_mongofind": "id",
+        "pk_jsonpath": "$.id",
+        "indices": [
+            "id",
+            "externalId" ]
+    },
+    "EmpEmployment": {
+        "query": "$select=userId,startDate,endDate,personIdExternal,professionalServiceDate&$orderby=personIdExternal,userId",
+        "indices": [ "personIdExternal", "userId" ]
+    },
+    "EmpCompensation": {
+        "query": "$select=empCompensationGroupSumCalculatedNav,userId,startDate,seqNumber&$expand=empCompensationGroupSumCalculatedNav&paging=snapshot",
+        "query_incremental": "$select=empCompensationGroupSumCalculatedNav,userId,startDate,seqNumber&$expand=empCompensationGroupSumCalculatedNav&$filter=lastModifiedDateTime ge datetime'{ts_incr}'&paging=snapshot",
+        "pk_mongofind": "userId",
+        "pk_jsonpath": "$.userId",
+        "indices": [
+            "userId",
+            "startDate",
+            "seqNumber" ]
+    },
+    "PayScaleArea": {
+        "indices" : [ "externalCode" ]
+    },
+    "PayScaleLevel": {
+        "query": "$expand=toPayScalePayComponents",
+        "indices" : [ "externalCode" ]
+    },
+    "PayScaleType": {
+        "indices" : [ "externalCode" ]
+    },
+    "PayScaleGroup": {
+        "indices" : [ "externalCode" ]
+    },
+    "Position": {
+        "query": "$expand=divisionNav,businessUnitNav,cust_bfLevel2Nav,cust_bfLevel3Nav,cust_bfLevel4Nav,jobCodeNav,parentPosition,positionMatrixRelationship&$select=externalName_defaultValue,externalName_en_GB,externalName_es_MX,externalName_fr_FR,externalName_zh_CN,division,regularTemporary,cust_riskRating,effectiveStartDate,positionTitle,employeeClass,positionCriticality,jobCode,cust_positionClass,effectiveStatus,code,cust_IARFlag,cust_CoreLeave,cust_JobFamily,cust_JobSubFamily,cust_vettingStatus,cust_execservice,department,location,cust_country,targetFTE,costCenter,payGrade,standardHours,cust_rangeMin,cust_rangeMed,cust_rangeMax,company,vacant,payGrade,cust_bfLevel4Nav/externalName_defaultValue,divisionNav/name_defaultValue,businessUnitNav/name_defaultValue,cust_bfLevel2Nav/externalName_defaultValue,cust_bfLevel3Nav/externalName_defaultValue,divisionNav/name,positionMatrixRelationship/Position_code,positionMatrixRelationship/relatedPosition,positionMatrixRelationship/matrixRelationshipType,parentPosition/code,businessUnit,cust_bfLevel2,cust_bfLevel3,cust_bfLevel4,costCenter,cust_FinanceCostCentre,cust_businessUnit,cust_salaryAdminPlan,lastModifiedDate,cust_internalClientGrp,cust_Geozone,cust_HRforHR,payRange,cust_payRange&$filter=effectiveStatus eq 'A'&$orderby=code,effectiveStartDate&paging=snapshot",
+        "indices": [
+            "code",
+            "jobCode",
+            "parentPosition.code" ]
+    },
+    "PositionRightToReturn": {
+        "indices": [ "externalCode" ]
+    },
+    "Country": {
+        "query": "$orderby=code,effectiveStartDate",
+        "indices": [ "code" ]
+    },
+    "PicklistLabel": {
+        "query": "$orderby=locale,optionId",
+        "indices": [ "optionId" ]
+    },
+    "Background_Education": {
+        "indices": [
+            "userId",
+            "backgroundElementId" ]
+    },
+    "EmployeeTime": {
+        "query": "$expand=timeTypeNav&fromDate=1900-01-01&paging=snapshot&$orderby=externalCode&$filter=startDate gt datetime'{dt-13m}T00:00:00Z'",
+        "indices": [
+            "backgroundElementId",
+            "userId",
+            "lastModifiedDateTime",
+            "approvalStatus" ]
+    },
+    "PickListV2": {
+        "query": "$filter=id ne 'sysJobCodes' and id ne 'TAO_ET_RARE_SchoolList' and id ne 'TAO_ET_UniversityName'&$expand=values&customPageSize=10&$orderby=id",
+        "indices": [ "id","values.externalCode" ]
+    },
+    "Picklist('EMPLOYEECLASS')": {
+        "respath": "Picklist('EMPLOYEECLASS')",
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]",
+        "mongo_collection": "Picklist('EMPLOYEECLASS')-{ts}"
+    },
+    "Picklist('ISOCountryList')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]",
+        "mongo_collection": "Picklist('ISOCountryList')-{ts}"
+    },
+    "Picklist('STATE_USA')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]",
+        "mongo_collection": "Picklist('STATE_USA')-{ts}"
+    },
+    "Picklist('PROVINCE_CAN')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]",
+        "mongo_collection": "Picklist('PROVINCE_CAN')-{ts}"
+    },
+    "Picklist('SHIFTCODE')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('employee-status')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('employee-type')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('language')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('salutation')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist": {
+        "query": [
+            "$filter=picklistId ne 'sysJobCodes' and picklistId ne 'TAO_ET_RARE_SchoolList' ",
+            "and picklistId ne 'TAO_ET_UniversityName'&",
+            "$expand=picklistOptions/picklistLabels,picklistOptions/parentPicklistOption&",
+            "maximumExpandKeys=100000&$orderby=picklistId"],
+        "postproc": {
+            "extraction": {
+                "array_remove": [ "$.picklistOptions.results[?(@.status =~ '^(OBSOLETED|DELETED)$')]" ] } },
+        "indices": [ "picklistId", "picklistOptions.results.id" ]
+    },
+    "Picklist('TAO_ET_RARE_SchoolList')": {
+        "respath": "PicklistOption",
+        "query": "$filter=picklist/picklistId eq 'TAO_ET_RARE_SchoolList'&$expand=picklistLabels",
+        "results_path": "$.d.results[*]"
+    },
+    "Picklist('TAO_ET_UniversityName')": {
+        "respath": "PicklistOption",
+        "query": "$filter=picklist/picklistId eq 'TAO_ET_UniversityName'&$expand=picklistLabels",
+        "results_path": "$.d.results[*]"
+    },
+    "Picklist('ecMaritalStatus')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('ecPhoneType')": {
+        "query": "$expand=picklistOptions&$=status eq 'ACTIVE'",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('ecEmailType')": {
+        "query": "$expand=picklistOptions&$=status eq 'ACTIVE'",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('personRelationshipType')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('permitdoctype')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('employment-type')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]",
+        "indices": [ "externalCode" ]
+    },
+    "Picklist('TN_CAN_VisibleMinority')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('yesNoUnknown_CAN')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('yesNo')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('TN_Glentity')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('TN_GBR_COUNTY')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "Picklist('TN_IAR')": {
+        "query": "$expand=picklistOptions/picklistLabels",
+        "results_path": "$.d.picklistOptions.results[*]"
+    },
+    "FOJobFunction": {
+        "query": "$orderby=externalCode,startDate"
+    },
+    "FOJobClassLocalUSA": {
+        "query": "$orderby=country,externalCode,startDate"
+    },
+    "cust_JobSubFamily": {
+        "query": "$expand=cust_toJobFamily&$orderby=effectiveStartDate,externalCode"
+    },
+    "PerGlobalInfoCHN": {
+        "query": "$orderby=country,personIdExternal,startDate",
+        "indices": [ "personIdExternal" ]
+    },
+    "Background_Certificates": {
+        "indices": [
+            "userId",
+            "cert_name",
+            "backgroundElementId" ]
+    },
+    "FOPayComponent": {
+        "query": "$orderby=externalCode,startDate"
+    },
+    "OneTimeDeduction": {
+        "query": "$orderby=externalCode"
+    },
+    "EmpWorkPermit": {
+        "query": "$orderby=country,documentNumber,documentType,userId",
+        "indices": [
+            "userId",
+            "documentType" ]
+    },
+    "EmpJob": {
+        "query": "$select=customString64,countryOfCompany,department,flsaStatus,managerId,position,jobCode,company,startDate,endDate,emplStatus,employeeType,userId&orderby=seqNumber,startDate,userId&paging=snapshot",
+        "indices": [
+            "userId",
+            "startDate",
+            "__metadata.uri",
+            "position",
+            "managerId" ]
+    },
+    "cust_regimeCode1611": {
+        "query": "filterParentDate=true&$orderby=cust_IARRegimeCode_effectiveStartDate,cust_IARRegimeCode_externalCode,externalCode",
+        "indices": [
+            "cust_IARRegimeCode_externalCode",
+            "cust_Responsibility" ]
+    },
+    "cust_BAMFCode1611": {
+        "query": "filterParentDate=true&$orderby=cust_IARBAMF_effectiveStartDate,cust_IARBAMF_externalCode,externalCode",
+        "indices": [
+            "cust_IARBAMF_externalCode",
+            "cust_Responsibility" ]
+    },
+    "cust_Responsibility1611": {
+        "query": "filterParentDate=true&$orderby=cust_IAR1611_effectiveStartDate,cust_IAR1611_externalCode,externalCode",
+        "indices": [
+            "cust_IAR1611_externalCode",
+            "cust_Responsibility" ]
+    },
+    "cust_MRTVetting": {
+        "query": "$orderby=effectiveStartDate,externalCode&fromDate=1900-01-01&toDate=9999-12-31&paging=snapshot",
+        "indices": [ "externalCode" ]
+    },
+    "FOEventReason": {
+        "query": "$expand=nameTranslationNav&$orderby=externalCode,startDate",
+        "indices": [ "externalCode" ]
+    },
+    "PaymentMethodV3": {
+        "query": "$orderby=externalCode"
+    },
+    "Bank": {
+        "query": "$select=bankName,externalCode&$orderby=externalCode"
+    },
+    "cust_salaryPlan": {
+        "query": "$expand=cust_toCompany&$orderby=effectiveStartDate,externalCode"
+    },
+    "cust_CoreLeave": {
+        "query": "$select=createdBy,createdDateTime,cust_CoreLeave_EndDate,cust_CoreLeave_Period,cust_CoreLeave_RequestStatus,cust_CoreLeave_StartDate,cust_ExemptionReason,cust_ExemptionStatus,effectiveStartDate,externalCode,lastModifiedBy,lastModifiedDateTime,mdfSystemRecordStatus,mdfSystemEffectiveEndDate,cust_CoreLeave_PeriodNav,cust_CoreLeave_RequestStatusNav,cust_ExemptionStatusNav,cust_ExemptionReasonNav,externalCodeNav,mdfSystemRecordStatusNav,wfRequestNav&$expand=cust_CoreLeave_PeriodNav,cust_ExemptionStatusNav,cust_CoreLeave_RequestStatusNav,cust_ExemptionReasonNav,externalCodeNav,mdfSystemRecordStatusNav&$orderby=effectiveStartDate,externalCode",
+        "indices": [ "externalCode" ]
+    },
+    "FormTemplate": {
+        "query": "$expand=associatedForms&$filter=formTemplateName eq 'Performance Improvement Plan'&$orderby=formTemplateId",
+        "indices": [ "formTemplateName" ]
+    },
+    "TimeType": {
+        "query": "$orderby=externalCode",
+        "indices": [ "externalCode" ]
+    },
+    "BenefitEnrollment": {
+        "query": "$expand=benefitNav,cust_penAdditionalPensionDatesEnrollment&$orderby=workerId&paging=snapshot",
+        "indices": [ "workerId" ]
+    },
+    "Benefit": {
+        "query": "$orderby=benefitId,effectiveStartDate&paging=snapshot",
+        "indices": [ "benefitId" ]
+    },
+    "EmpJobAllSegmentsV1": {
+        "respath": "EmpJob",
+        "query": [
+            "$select=seqNumber,countryOfCompany,department,flsaStatus,managerId,position,jobCode,payGroup,",
+            "payGrade,event,eventReason,customString43,location,businessUnit,customString6,customString7,",
+            "customString8,customString12,customString13,customString18,division,lastModifiedOn,fte,company,",
+            "startDate,endDate,emplStatus,employeeType,userId,employmentType,employeeClass&",
+            "fromDate=1900-01-01&",
+            "$filter=(startDate gt datetime'{dt-3m}T00:00:00.000Z' and emplStatus eq '163666') or ",
+            "(countryOfCompany eq 'FRA') or (startDate gt datetime'{dt}T00:00:00.000Z')&",
+            "toDate=9999-12-31&",
+            "paging=snapshot&",
+            "$orderby=seqNumber,startDate,userId&",
+            "$format=json"],
+        "indices": [
+            "userId",
+            "startDate",
+            "__metadata.uri" ]
+    },
+    "LegalEntityUSA": {
+        "query": "$orderby=LegalEntity_effectiveStartDate,LegalEntity_externalCode,externalCode",
+        "indices": [ "LegalEntity_externalCode" ]
+    },
+    "cust_LocalSecondment": {
+        "query": "$orderby=externalCode,effectiveStartDate",
+        "indices": [ "externalCode" ]
+    },
+    "TrendData_SysOverallCompetency": {
+        "indices": [ "id", "userId", "startDate", "endDate" ]
+    },
+    "TrendData_SysOverallObjective": {
+        "indices": [ "id", "userId", "startDate", "endDate" ]
+    },
+    "TrendData_SysOverallPerformance": {
+        "indices": [ "id", "userId", "startDate", "endDate" ]
+    },
+    "TrendData_SysOverallPotential": {
+        "indices": [ "id", "userId", "startDate", "endDate" ]
+    },
+    "TrendData_sysOverallobjective": {
+        "api": "sfapi",
+        "query": [
+            "SELECT id, rating, lastModified, userId, start_date, end_date, name, description, label, min, max, source, module",
+            "FROM TrendData_sysOverallobjective" ],
+        "query_incremental": [
+            "SELECT id, rating, lastModified, userId, start_date, end_date, name, description, label, min, max, source, module",
+            "FROM TrendData_sysOverallobjective ",
+            "WHERE lastModified > to_DateTime('{ts_incr}')" ],
+        "pk_mongofind": "id",
+        "pk_jsonpath": "$.id",
+        "indices": [ "id", "userId", "start_date", "end_date" ]
+    },
+    "TrendData_sysOverallPerformance": {
+        "api": "sfapi",
+        "query": [
+            "SELECT id, rating, lastModified, userId, start_date, end_date, name, description, label, min, max, source, module",
+            "FROM TrendData_sysOverallPerformance" ],
+        "query_incremental": [
+            "SELECT id, rating, lastModified, userId, start_date, end_date, name, description, label, min, max, source, module",
+            "FROM TrendData_sysOverallPerformance",
+            "WHERE lastModified > to_DateTime('{ts_incr}')" ],
+        "pk_mongofind": "id",
+        "pk_jsonpath": "$.id",
+        "indices": [ "id", "userId", "start_date", "end_date" ]
+    },
+    "TrendData_sysOverallPotential": {
+        "api": "sfapi",
+        "query": [
+            "SELECT id, rating, lastModified, userId, start_date, end_date, name, description, label, min, max, source, module",
+            "FROM TrendData_sysOverallPotential" ],
+        "query_incremental": [
+            "SELECT id, rating, lastModified, userId, start_date, end_date, name, description, label, min, max, source, module",
+            "FROM TrendData_sysOverallPotential",
+            "WHERE lastModified > to_DateTime('{ts_incr}')" ],
+        "pk_mongofind": "id",
+        "pk_jsonpath": "$.id",
+        "indices": [ "id", "userId", "start_date", "end_date" ]
+    },
+    "WorkSchedule": {
+        "query": "$select=userId,country,mdfSystemStatus,externalCode,startingDate,mdfSystemEffectiveEndDate,mdfSystemEffectiveStartDate,createdDate,lastModifiedDate",
+        "indices": [
+            "externalCode",
+            "userId" ]
+    },
+    "WorkScheduleDay": {
+        "query": "$select=WorkSchedule_externalCode,day,workingHours",
+        "indices": [
+            "WorkSchedule_externalCode" ]
+    },
+    "WorkScheduleDayModelAssignment": {
+        "query": "$select=WorkSchedule_externalCode,day,dayWorkingHours",
+        "indices": [
+            "WorkSchedule_externalCode" ]
+    },
+    "JobRequisition": {
+        "query": "&$expand=bgiAccountId,businessUnit_obj,costCenter_obj,custJobGrade,custReason,cust_BELR,cust_Brand,cust_HireVueInterview,cust_IARFlag,cust_JobFamily,cust_KaratInterview,cust_KornFerryAssessment,cust_LocAgnostic,cust_MRTStatus,cust_OptAgencyHiring,cust_PositionClass,cust_RelocSupp,cust_SupportInternationalHiring,cust_ValueAssessment,cust_assessmentConfirm,cust_bfLevel2,cust_bfLevel3,cust_bfLevel4,cust_candidatesegment,cust_eeo1JobCategory,cust_eeoJobGroup,cust_flsa,cust_jobSubFamily,cust_regulatedRoles,cust_taOwningTeam,cust_techinterviewConfirm,cust_vettingStatus,cust_vettingcountry,cust_workStyle,custhiringforskills,department_obj,division_obj,employeeClass,jobType,lastModifiedByNav,lastModifiedProxyUserNav,legalEntity_obj,location_obj,packageId,status,cust_SkillsAssessment,filter1&$select=assessRatingScaleName,businessUnitCode,closedDateTime,country,createdDateTime,currency,custWorkHrs,cust_BudgetedFromDate,cust_FinanceCostCentre,cust_FixedTermContractLength,cust_IntakeMeetingDate,cust_ProjectName,cust_Workforce_Plan_ID,cust_locationcity,cust_rangeMax,cust_rangeMaxUSA,cust_rangeMed,cust_rangeMin,departmentCode,divisionCode,evergreen,jobCode,jobReqId,lastModifiedBy,lastModifiedDateTime,numberOpenings,openingsFilled,parentJobReqId,positionNumber,quickApply,sfstd_jobReqType,targetFTE,templateId,templateName,bgiAccountId/externalCode,businessUnit_obj/externalCode,costCenter_obj/costcenterExternalObjectID,costCenter_obj/externalCode,custJobGrade/externalCode,custReason/externalCode,cust_BELR/externalCode,cust_Brand/externalCode,cust_HireVueInterview/externalCode,cust_IARFlag/externalCode,cust_JobFamily/externalCode,cust_KaratInterview/externalCode,cust_KornFerryAssessment/externalCode,cust_LocAgnostic/externalCode,cust_MRTStatus/externalCode,cust_OptAgencyHiring/externalCode,cust_PositionClass/externalCode,cust_RelocSupp/externalCode,cust_SupportInternationalHiring/externalCode,cust_ValueAssessment/externalCode,cust_assessmentConfirm/externalCode,cust_bfLevel2/externalCode,cust_bfLevel3/externalCode,cust_bfLevel4/externalCode,cust_candidatesegment/externalCode,cust_eeo1JobCategory/externalCode,cust_eeoJobGroup/externalCode,cust_flsa/externalCode,cust_jobSubFamily/externalCode,cust_regulatedRoles/externalCode,cust_taOwningTeam/externalCode,cust_techinterviewConfirm/externalCode,cust_vettingStatus/externalCode,cust_vettingcountry/externalCode,cust_workStyle/externalCode,custhiringforskills/externalCode,department_obj/externalCode,division_obj/externalCode,employeeClass/externalCode,filter1/id,jobReqLocale/externalTitle,jobType/externalCode,lastModifiedByNav/empId,lastModifiedProxyUserNav/empId,legalEntity_obj/externalCode,location_obj/externalCode,packageId/externalCode,status/externalCode,cust_SkillsAssessment/externalCode,candidateProgress,deleted",
+        "indices": [
+            "jobReqId",
+            "age",
+            "appTemplateId",
+            "lastModifiedDateTime" ]
+    },
+    "JobOffer": {
+        "query": "&$expand=cust_basepayoffer,cust_contractcountry,cust_onetimepayoffer1,cust_onetimepayoffer2,cust_onetimepayoffer3,cust_recurpayoffer1,cust_recurpayoffer2,cust_recurpayoffer3,cust_recurpayoffer4,cust_recurpayoffer5,cust_recurpayoffer6,customPicklist10,createdByNav&$select=offerApprovalId,anonymizedDate,anonymizedFlag,applicationId,createdBy,createdDate,currency,cust_basepayofferamount,cust_onetimepayofferamount1,cust_onetimepayofferamount2,cust_onetimepayofferamount3,cust_recurpayofferamount1,cust_recurpayofferamount2,cust_recurpayofferamount3,cust_recurpayofferamount4,cust_recurpayofferamount5,cust_recurpayofferamount6,customLong10,customLong9,customString1,customString2,customString4,formDataId,formTemplateId,initialComment,internalStatus,lastModifiedBy,lastModifiedDate,templateId,userIsCurrentApprover,userIsOriginator,version,cust_basepayoffer/externalCode,cust_contractcountry/externalCode,cust_onetimepayoffer1/externalCode,cust_onetimepayoffer2/externalCode,cust_onetimepayoffer3/externalCode,cust_recurpayoffer1/externalCode,cust_recurpayoffer2/externalCode,cust_recurpayoffer3/externalCode,cust_recurpayoffer4/externalCode,cust_recurpayoffer5/externalCode,cust_recurpayoffer6/externalCode,customPicklist10/externalCode,createdByNav/empId",
+        "indices": [
+            "offerApprovalId",
+            "anonymizedDate",
+            "anonymizedFlag",
+            "applicationId",
+            "lastModifiedDate" ]
+    },
+    "JobOfferApprover": {
+        "query": "&$expand=createdByNav&$select=offerApproverId,approvalStepId,approverAction,approverActionDate,approverFirstName,approverLastName,approverOrder,comment,lastModifiedBy,lastModifiedDate,offerApprovalId,username,createdDate,createdByNav/empId",
+        "indices": [
+            "offerApproverId",
+            "approvalStepId",
+            "approverAction",
+            "username",
+            "lastModifiedDate",
+            "offerApprovalId" ]
+    },
+    "JobRequisitionOperator": {
+        "query": "&$expand=userNav&$select=jobReqId,operatorRole,usersSysId,email,firstName,isAdminSelected,isOwner,lastName,phone,userName,userNav/empId",
+        "indices": [
+            "jobReqId",
+            "age",
+            "appTemplateId",
+            "lastModifiedDateTime" ]
+    },
+    "JobApplicationAssessmentOrder": {
+        "query": "&$select=id,applicationId,createdBy,createdDateTime,packageCode,vendorCode,lastModifiedDateTime",
+        "indices": [
+            "jobReqId",
+            "operatorRole",
+            "usersSysId",
+            "userName" ]
+    },
+    "JobApplicationAssessmentReport": {
+        "query": "&$select=id,orderId,status,statusDate,statusDetails",
+        "indices": [
+            "id",
+            "orderId",
+            "statusDate" ]
+    },
+    "JobRequisitionPosting": {
+        "query": "&$select=jobPostingId,jobReqId,agencyComments,boardId,boardName,channelId,extPartnerAccountId,isPostingUpdatable,lastModifiedBy,lastModifiedDateTime,postEndDate,postEndDateOffset,postStartDate,postStartDateOffset,postedBy,postingStatus",
+        "indices": [
+            "jobPostingId",
+            "jobReqId",
+            "lastModifiedDateTime" ]
+    },
+    "JobApplicationAssessmentReportDetail": {
+        "query": "&$expand=assessmentReport&$select=id,scoreComponent,scoreValue,assessmentReport/id,assessmentReport/orderId",
+        "indices": [
+            "id" ]
+    },
+    "JobApplicationAudit": {
+        "query": "&$expand=jobApplication/jobRequisition&$select=fieldOrderPos,jobApplication/applicationId,jobApplication/jobRequisition/jobReqId,newValue,revNumber,changedBy,dateNewValue,dateOldValue,fieldId,fieldType,lastModifiedBy,lastModifiedDate,lastModifiedExtId,oldValue,source",
+        "indices": [
+            "fieldOrderPos",
+            "revNumber",
+            "lastModifiedDate" ]
+    },
+    "JobReqFwdCandidates": {
+        "query": "&$expand=referredByNav&$select=candidateId,jobReqId,createdDate,expirationDate,extRecruiterId,jobBoardName,referredBy,status,type,referralId,referredByNav/firstName,referredByNav/lastName,referredByNav/userId",
+        "indices": [
+            "candidateId",
+            "jobReqId",
+            "candidateSiteid",
+            "lastModifiedDate" ]
+    },
+    "JobApplicationStatus": {
+        "query": "&$select=appStatusSetId,appStatusId,appStatusName",
+        "indices": [
+            "appStatusSetId",
+            "appStatusId" ]
+    },
+    "EmployeeTimeSheet": {
+        "query": "$filter=startDate gt datetime'{dt-3m}T00:00:00'&fromDate=1900-01-01&paging=snapshot",
+        "indices": [
+            "userId", "lastModifiedDateTime", "approvalStatus" ]
+    },
+    "EmployeeTimeValuationResult": {
+        "query": "$filter=bookingDate gt datetime'{dt-3m}T00:00:00'&fromDate=1900-01-01&paging=snapshot",
+        "indices": [
+            "EmployeeTimeSheet_externalCode", "lastModifiedDateTime", "allowanceType" ]
+    }
+}
